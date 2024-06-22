@@ -6,10 +6,18 @@ const API_URL = 'https://newsapi.org/v2/top-headlines';
 export const fetchNews = createAsyncThunk(
   'news/fetchNews',
   async ({ category, page, searchTerm }) => {
-    const response = await fetch(`${API_URL}?category=${category}&page=${page}&q=${searchTerm}&apiKey=${API_KEY}`);
+    const url = new URL(API_URL);
+    url.searchParams.append('category', category);
+    url.searchParams.append('page', page);
+    url.searchParams.append('q', searchTerm);
+    url.searchParams.append('apiKey', API_KEY);
+
+    const response = await fetch(url);
+
     if (!response.ok) {
-      throw new Error('Failed to fetch news');
+      throw new Error(`Failed to fetch news: ${response.statusText}`);
     }
+
     return response.json();
   }
 );
